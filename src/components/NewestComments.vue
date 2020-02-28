@@ -1,22 +1,26 @@
 <template>
   <div class="card">
     <div class="card-header">
-      最新餐廳
+      最新評論
     </div>
     <div class="card-body">
       <div 
-        v-for="restaurant in restaurants"
-        :key="restaurant.id"
+        v-for="comment in comments"
+        :key="comment.id"
       >
         <h4>
-          <a href="#">{{ restaurant.name }}</a>
-          &nbsp;
-          <!-- <small>{{ restaurant.Category.name }}</small> -->
+          <a href="#">
+            <!-- {{ comment.Restaurant.name }} -->
+          </a>
         </h4>
-        <p>{{ restaurant.description }}</p>
-        {{ restaurant.createdAt | fromNow }}
+        <p>{{ comment.text }}</p>by
+        <a href="#">
+          {{ comment.User.name }}
+        </a>
+        {{ comment.createdAt | fromNow }}
         <hr>
       </div>
+
     </div>
   </div>
 </template>
@@ -34,7 +38,7 @@ export default {
     }
   },
   props: {
-    restaurants: {
+    comments: {
       type: Array,
       required: true
     },
