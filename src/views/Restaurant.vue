@@ -2,6 +2,7 @@
   <div class="container py-5">
     <h1>餐廳描述頁</h1>
     <!-- 餐廳資訊頁 RestaurantDetail -->
+    <RestaurantDetail :initial-restaurant="restaurant"/>
     <hr>
     <!-- 餐廳評論 RestaurantComments -->
     <!-- 新增評論 CreateComment -->
@@ -9,21 +10,23 @@
 </template>
 
 <script>
+import RestaurantDetail from '../components/RestaurantDetail'
+
 const dummyData = {
   "restaurant": {
         "id": 1,
-        "name": "Judy Runte",
-        "tel": "(918) 827-1962",
-        "address": "98138 Elisa Road",
-        "opening_hours": "08:00",
-        "description": "dicta et cupiditate",
+        "name": "Judy Runte kkk",
+        "tel": "(0918) 827-1962",
+        "address": "98138 Elisa Road usa",
+        "opening_hours": "02:00",
+        "description": "dicta et cupiditate123",
         "image": "https://loremflickr.com/320/240/food,dessert,restaurant/?random=1",
         "createdAt": "2019-06-22T09:00:43.000Z",
         "updatedAt": "2019-06-22T09:00:43.000Z",
         "CategoryId": 3,
         "Category": {
             "id": 3,
-            "name": "義大利料理",
+            "name": "義大大利料理",
             "createdAt": "2019-06-22T09:00:43.000Z",
             "updatedAt": "2019-06-22T09:00:43.000Z"
         },
@@ -50,13 +53,13 @@ const dummyData = {
             }
         ]
     },
-    "isFavorited": false,
-    "isLiked": false
+    "isFavorited": true,
+    "isLiked": true
 }
 
 export default {
   components: {
-
+    RestaurantDetail
   },
   data () {
     return {
