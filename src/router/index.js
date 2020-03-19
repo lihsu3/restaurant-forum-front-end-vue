@@ -38,6 +38,11 @@ const routes = [
     component: () => import('../views/AdminRestaurant.vue')
   },
   {
+    path: '/admin/categories',
+    name: 'admin-categories',
+    component: () => import('../views/AdminCategories.vue')
+  },
+  {
     path: '/signin',
     name: 'sign-in',
     component: SignIn
