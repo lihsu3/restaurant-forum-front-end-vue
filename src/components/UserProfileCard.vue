@@ -21,13 +21,13 @@
             <li><strong>{{ numOfFollowers }}</strong> followers (追隨者)</li>
           </ul>
           <p></p>
-          <button 
+          <router-link 
             v-if="currentUser.id === userProfile.id"
-            type="button" 
+            :to="{ name: 'user-edit', params: { id: currentUser.id }}"
             class="btn btn-primary"
           >
             Edit
-          </button>
+          </router-link>
           <button 
             v-else-if="checkIsFollowed"
             type="button" 

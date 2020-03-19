@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import AdminRestaurantForm from './../components/AdminRestaurantForm.vue'
+import AdminRestaurantForm from '../components/AdminRestaurantForm.vue'
 
 export default {
   components: {
