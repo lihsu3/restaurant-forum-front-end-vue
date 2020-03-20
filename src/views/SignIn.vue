@@ -74,7 +74,7 @@ export default {
     }
   },
   methods: {
-    handleSubmit () {
+    async handleSubmit () {
       // 如果 email 或 password 為空，則使用 Toast 提示
       // 然後 return 不繼續往後執行
       if (!this.email || !this.password) {
@@ -87,10 +87,12 @@ export default {
 
       this.isProcessing = true
 
-      authorizationAPI.signIn({
-        email: this.email,
-        password: this.password
-      }).then(response => {
+      try {
+        const response = await authorizationAPI.signIn({
+          email: this.email,
+          password: this.password
+        })
+
         // 取得 API 請求後的資料
         const { data } = response
         // console.log(response)
@@ -101,8 +103,8 @@ export default {
         // no need to toggle isProcessing if login successfully
         // 成功登入後轉址到餐聽首頁
         this.$router.push('/restaurants')
-      }).catch(error => {
-        // 將密碼欄位清空
+      } catch(err) {
+          // 將密碼欄位清空
         this.password = ''
         this.email = ''
 
@@ -112,8 +114,8 @@ export default {
           title: '請確認您輸入的帳號密碼錯誤'
         })
         this.isProcessing = false
-        console.log('error', error)
-      })
+        // console.log('error', err)
+      }
     }
   }
 }
