@@ -69,7 +69,6 @@ export default {
           page,
           categoryId
         })
-        // const { data, statusText } = response
 
         if (statusText !== 'OK') {
           throw new Error(statusText)
