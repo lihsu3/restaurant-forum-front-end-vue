@@ -1,15 +1,12 @@
 <template>
   <div class="container py-5">
     <h1>餐廳描述頁</h1>
-    <!-- 餐廳資訊頁 RestaurantDetail -->
     <RestaurantDetail :initial-restaurant="restaurant"/>
     <hr>
-    <!-- 餐廳評論 RestaurantComments -->
     <RestaurantComments 
       :restaurant-comments="restaurantComments"
       @after-delete-comment="afterDeleteComment"
     />
-    <!-- 新增評論 CreateComment -->
     <CreateComment
       :restaurant-id="restaurant.id"
       @after-create-comment="afterCreateComment"
