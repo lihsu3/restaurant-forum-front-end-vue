@@ -17,7 +17,7 @@
           <h5 class="card-title">
             {{ restaurant.name }}
           </h5>
-          <span class="badge badge-secondary">收藏數：{{ restaurant.FavoriteCount }}</span>
+          <span class="badge badge-secondary">收藏數：{{ updatedTopRestaurant.FavoriteCount }}</span>
           <p class="card-text">
             {{ restaurant.description }}
           </p>
@@ -29,9 +29,9 @@
           </router-link>
 
           <button
-            v-if="restaurant.isFavorited"
+            v-if="updatedTopRestaurant.isFavorited"
             type="button"
-            @click.stop.prevent="deleteFavorite"
+            @click.stop.prevent="deleteFavorite(restaurant.id)"
             class="btn btn-danger mr-2"
           >
             移除最愛
@@ -39,7 +39,7 @@
           <button
             v-else
             type="button"
-            @click.stop.prevent="addFavorite"
+            @click.stop.prevent="addFavorite(restaurant.id)"
             class="btn btn-primary"
           >
             加到最愛
@@ -51,6 +51,9 @@
 </template>
 
 <script>
+import usersAPI from './../apis/users'
+import { Toast } from './../utils/helpers'
+
 export default {
   props: {
     topRestaurant: {
@@ -63,12 +66,47 @@ export default {
       restaurant: this.topRestaurant
     }
   },
+  computed: {
+    updatedTopRestaurant: function () { 
+      return this.topRestaurant
+    }
+  },
   methods: {
-    deleteFavorite () {
-      this.restaurant.isFavorited = false
+    async deleteFavorite (restaurantId) {
+      try {
+        const { data, statusText } = await usersAPI.deleteFavorite({
+          restaurantId
+        })
+
+        if ((data.status !== "success") || (statusText !== "OK")) {
+          throw new Error(statusText)
+        }
+
+        this.$emit('after-delete-favorite', restaurantId)
+      } catch (err) {
+        Toast.fire({
+          type: 'error',
+          title: '無法取消收藏restaurant，請稍後再試'
+        })
+      }
     },
-    addFavorite () {
-      this.restaurant.isFavorited = true
+    async addFavorite (restaurantId) {
+      try {
+        const { data, statusText } = await usersAPI.addFavorite({
+          restaurantId
+        })
+
+        if ((data.status !== "success") || (statusText !== "OK")) {
+          throw new Error(statusText)
+        }
+
+        this.$emit('after-add-favorite', restaurantId)
+      } catch (err) {
+        Toast.fire({
+          type: 'error',
+          title: '無法收藏restaurant，請稍後再試'
+        })
+      }
     }
   }
 }
