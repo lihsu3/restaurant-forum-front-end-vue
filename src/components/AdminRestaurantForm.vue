@@ -156,6 +156,14 @@ export default {
       isLoading: true
     }
   },
+  watch: {
+    initialRestaurant: function (restaurant) {
+      this.restaurant = {
+        ...this.restaurant,
+        ...restaurant
+      }
+    }
+  },
   created () {
     this.fetchCategories()
     this.restaurant = {
