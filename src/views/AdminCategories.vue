@@ -1,6 +1,5 @@
 <template>
   <div class="container py-5">
-     <!-- 1. 使用先前寫好的 AdminNav -->
     <AdminNav />
 
     <form class="my-4">
@@ -17,7 +16,7 @@
           <button
             type="button"
             class="btn btn-primary"
-            @click.stop.prevent="createCategory"
+            @click.stop.prevent="createCategory(newCategoryName)"
           >
             新增
           </button>
@@ -105,79 +104,82 @@
 </template>
 
 <script>
-import uuid from 'uuid/v4'
 import AdminNav from '@/components/AdminNav'
-//  2. 定義暫時使用的資料
-const dummyData = {
-  categories: [
-    {
-      id: 1,
-      name: '中式料理',
-      createdAt: '2019-06-22T09:00:43.000Z',
-      updatedAt: '2019-06-22T09:00:43.000Z'
-    },
-    {
-      id: 2,
-      name: '日本料理',
-      createdAt: '2019-06-22T09:00:43.000Z',
-      updatedAt: '2019-06-22T09:00:43.000Z'
-    },
-    {
-      id: 3,
-      name: '義大利料理',
-      createdAt: '2019-06-22T09:00:43.000Z',
-      updatedAt: '2019-06-22T09:00:43.000Z'
-    },
-    {
-      id: 4,
-      name: '墨西哥料理',
-      createdAt: '2019-06-22T09:00:43.000Z',
-      updatedAt: '2019-06-22T09:00:43.000Z'
-    }
-  ]
-}
+import adminAPI from '../apis/admin'
+import { Toast } from './../utils/helpers'
 
 export default {
   components: {
     AdminNav
   },
-  // 3. 定義 Vue 中使用的 data 資料
   data () {
     return {
       categories: [],
       newCategoryName: ''
     }
   },
-  // 5. 調用 `fetchCategories` 方法
   created () {
     this.fetchCategories()
   },
   methods: {
-    // 4. 定義 `fetchCategories` 方法，把 `dummyData` 帶入 Vue 物件
-    fetchCategories () {
-      this.categories = dummyData.categories.map((category) => ({
-        ...category,
-        isEditing: false
-      }))
+    async fetchCategories () {
+      try {
+        const { data, statusText } = await adminAPI.categories.get()
+
+        if (statusText !== 'OK') {
+          throw new Error(statusText)
+        }
+
+        this.categories = data.categories.map((category) => ({
+          ...category,
+          isEditing: false
+        }))
+      } catch(err) {
+        Toast.fire({
+          type: 'error',
+          title: 'something wrong..., '
+        })
+      }      
     },
-    createCategory (name) {
-      console.log(name)
-      // TODO: 透過 API 告知伺服器欲新增的餐廳類別...
+    async createCategory (name) {
+      try {
+        const { data, statusText } = await adminAPI.categories.create({ name })
 
-      // 將新的類別添加到陣列中
-      this.categories.push({
-        id: uuid(),
-        name: this.newCategoryName
-      })
+        if ((data.status !== 'success') || (statusText !== 'OK')) {
+          throw new Error(statusText)
+        }
 
-      this.newCategoryName = '' // 清空原本欄位中的內容
+        this.categories.push({
+          id: data.categoryId,
+          name: this.newCategoryName
+        })
+
+        this.newCategoryName = '' //clear the input field
+      } catch (err) {
+        Toast.fire({
+          type: 'error',
+          title: 'something wrong..., unable to create'
+        })
+      }
     },
-    deleteCategory (categoryId) {
-      // TODO: 透過 API 告知伺服器欲刪除的餐廳類別
+    async deleteCategory (categoryId) {
+      try {
+        const { data, statusText } = await adminAPI.categories.delete({ categoryId })
 
-      this.categories = this.categories.filter(
-        (category) => category.id !== categoryId
-      )
+        if ((data.status !== 'success') || (statusText !== 'OK')) {
+          throw new Error(statusText)
+        }
+
+        this.categories = this.categories.filter(
+          (category) => category.id !== categoryId
+        )
+      } catch (err) {
+        Toast.fire({
+          type: 'error',
+          title: 'something wrong..., unable to delete'
+        })
+      }
+      
     },
     toggleIsEditing (categoryId) {
       this.categories = this.categories.map(category => {
@@ -190,10 +192,23 @@ export default {
         }
       })
     },
-    updateCategory ({ categoryId, name }) {
-      console.log(name)
-      // TODO: 透過 API 去向伺服器更新餐廳類別名稱
-      this.toggleIsEditing(categoryId)
+    async updateCategory ({ categoryId, name }) {
+      try {
+        this.toggleIsEditing(categoryId)
+        const { data, statusText } = await adminAPI.categories.update({
+          categoryId,
+          name
+        })
+        
+        if ((data.status !== 'success') || (statusText !== 'OK')) {
+          throw new Error(statusText)
+        }
+      } catch (err) {
+        Toast.fire({
+          type: 'error',
+          title: 'something wrong..., unable to update'
+        })
+      }
     },
     handleCancel (categoryId) {
       this.categories = this.categories.map(category => {
